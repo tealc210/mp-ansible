@@ -7,8 +7,15 @@
     - role: nginx
     
     # Démarrer la deuxième instance de webapp
-    - role: <FIX IT>
+    - role: webapp
       vars:
         container_name: "webapp1"
-        app_port: 8082
+        app_port: 80
         target_dir: "{%- if ansible_distribution == 'CentOS' -%}/usr/share/nginx/html{%- elif ansible_distribution == 'Ubuntu' -%}/var/www/html{%- endif %}"
+
+  tasks:
+
+  - name: Start NginX
+    community.docker.docker_container:
+      name: "nginx"
+      state: started

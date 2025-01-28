@@ -1,1 +1,23 @@
 ---
+
+- name: "Unarchiving app files"
+  unarchive:
+    src: playbook_stacker.zip
+    dest: /var/tmp/
+
+- name: Providing NginX configuration file
+  template:
+    src: nginx-webapp.conf.j2
+    dest: /var/tmp/default.conf
+    mode: '0640'
+
+- name: "Provisionning container"
+  community.docker.docker_container:
+    name: "{{ container_name }}"
+    image: nginx:latest
+    state: started
+    networks:
+      - name: custom_net
+    volumes:
+      - /var/tmp/default.conf:/etc/nginx/conf.d/default.conf
+      - /var/tmp/playbook_stacker:{{ target_dir }}
